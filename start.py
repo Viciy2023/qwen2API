@@ -143,7 +143,8 @@ def main():
     check_and_install_dependencies()
     
     backend_proc = start_backend()
-    time.sleep(2) # 稍微错开启动时间
+    
+    # 因为 start_backend 已经是强阻塞（等待 ready_event），到这里说明后端必定已经 ready
     frontend_proc = start_frontend()
     
     print("\n==========================================")
