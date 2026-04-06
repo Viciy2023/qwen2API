@@ -23,11 +23,16 @@ def check_and_install_dependencies():
     print("⚡ [系统预检] 正在扫描底层铁壁的 Python 环境...")
     python_exec = sys.executable
     
+    # 注入环境变量，防止 Windows 下 pip 安装的包找不到
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(WORKSPACE_DIR)
+    
     # 安装后端依赖
     try:
         subprocess.check_call(
             [python_exec, "-m", "pip", "install", "-r", "requirements.txt", "--quiet"],
             cwd=BACKEND_DIR,
+            env=env,
             stdout=None, # 将 pip 安装日志直接输出，暴露错误
             stderr=subprocess.STDOUT
         )
@@ -36,9 +41,13 @@ def check_and_install_dependencies():
         
     print("⚡ [系统预检] 正在下载并配置浏览器内核 (Camoufox)...")
     try:
+        # 在 Windows 上，有时候 pip 安装的全局包不能通过 python -m 直接调用（特别是多版本或权限问题）
+        # 改用更通用的 shell=True 执行，让系统自动在 Scripts 目录里找 camoufox
         subprocess.check_call(
-            [python_exec, "-m", "camoufox", "fetch"],
+            "camoufox fetch" if os.name == "nt" else [python_exec, "-m", "camoufox", "fetch"],
             cwd=WORKSPACE_DIR,
+            shell=(os.name == "nt"),
+            env=env,
             stdout=None, # 将输出打印到终端，暴露详细报错
             stderr=subprocess.STDOUT
         )
