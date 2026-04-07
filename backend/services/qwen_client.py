@@ -89,8 +89,16 @@ class QwenClient:
         except Exception:
             return []
 
-    def _build_payload(self, chat_id: str, model: str, content: str) -> dict:
+    def _build_payload(self, chat_id: str, model: str, content: str, has_custom_tools: bool = True) -> dict:
         ts = int(time.time())
+        feature_config = {
+            "thinking_enabled": True, "output_schema": "phase", "research_mode": "normal",
+            "auto_thinking": True, "thinking_mode": "Auto", "thinking_format": "summary",
+            "auto_search": not has_custom_tools,
+            "code_interpreter": not has_custom_tools,
+            "function_calling": not has_custom_tools,
+            "plugins_enabled": not has_custom_tools,
+        }
         return {
             "stream": True, "version": "2.1", "incremental_output": True,
             "chat_id": chat_id, "chat_mode": "normal", "model": model, "parent_id": None,
@@ -98,7 +106,7 @@ class QwenClient:
                 "fid": str(uuid.uuid4()), "parentId": None, "childrenIds": [str(uuid.uuid4())],
                 "role": "user", "content": content, "user_action": "chat", "files": [],
                 "timestamp": ts, "models": [model], "chat_type": "t2t",
-                "feature_config": {"thinking_enabled": False, "auto_search": False, "code_interpreter": False},
+                "feature_config": feature_config,
                 "extra": {"meta": {"subChatType": "t2t"}}, "sub_chat_type": "t2t", "parent_id": None,
             }],
             "timestamp": ts,

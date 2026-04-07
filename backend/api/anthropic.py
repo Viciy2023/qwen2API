@@ -66,11 +66,11 @@ async def anthropic_messages(request: Request):
             
     log.info(f"[Anthropic] model={model}, stream=True, tools={[t.get('name') for t in tools]}, prompt_len={len(content)}")
 
-    try:
-        events, chat_id, acc = await client.chat_stream_events_with_retry(model, content)
-    except Exception as e:
-        log.error(f"Anthropic proxy failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    # try:
+    #     events, chat_id, acc = await client.chat_stream_events_with_retry(model, content)
+    # except Exception as e:
+    #     log.error(f"Anthropic proxy failed: {e}")
+    #     raise HTTPException(status_code=500, detail=str(e))
         
     async def generate():
         current_prompt = content
