@@ -155,8 +155,8 @@ async def anthropic_messages(request: Request):
                     elif current_prompt.endswith("Assistant:"):
                         current_prompt = current_prompt[:-10]
                         
-                    # 使用更加强烈的中文+英文双语提醒，并且直接替换结尾
-                    reminder = "\n\n【IMPORTANT: You MUST respond with a tool call using ✿ACTION✿ format. Do NOT just think silently. 必须输出✿ACTION✿格式工具调用！】\n\nAssistant: <think>\n"
+                    # 注入思考终止符，强制其直接输出结果
+                    reminder = "\n\n【IMPORTANT: You have thought enough. Do NOT just think silently. You MUST output a ✿ACTION✿ format tool call immediately! 必须直接输出 ✿ACTION✿ 工具调用，不准继续思考！】\n\nAssistant: "
                     current_prompt += reminder
                         
                     import asyncio

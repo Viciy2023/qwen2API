@@ -182,7 +182,6 @@ def parse_tool_calls(answer: str, tools: list):
     if answer.strip() and tools:
         lower_ans = answer.lower()
         # 匹配明确的工具调用意图词
-        intent_keywords = ["tool", "工具", "调用", "执行", "read", "write", "grep", "bash", "glob", "search"]
         
         found_intent = False
         # 只有在明确提到“使用/调用 xxx 工具/命令”时才拦截，避免普通对话被误杀
@@ -206,7 +205,10 @@ def parse_tool_calls(answer: str, tools: list):
     log.warning(f"[ToolParse] ✗ 未检测到工具调用，作为普通文本返回。工具列表: {tool_names}")
     
     # 终极防空指针：如果连 answer 都是空的，Claude Code 收到空 text 会崩溃
-    text_content = answer if answer.strip() else "[模型正在思考或暂无输出，请继续]"
+    # 注意：如果回答为空且我们正在进行强制重试阶段，我们不应随意将其转换为提示文字
+    # 而是应该交给 anthropic.py 里的重试机制。但既然进入到了这里，说明重试已经耗尽，或者正常触发
+    # 我们仍然需要返回一段非空的文本。
+    text_content = answer if answer.strip() else "[模型思考完毕，但未能按照要求输出✿ACTION✿工具调用。请重新调整提示词。]"
     return [{"type": "text", "text": text_content}], "end_turn"
 
 def inject_format_reminder(prompt: str, tool_name: str) -> str:
