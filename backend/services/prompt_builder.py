@@ -58,7 +58,7 @@ def _normalize_tools(tools: list) -> list:
     return out
 
 def build_prompt_with_tools(messages: list, tools: list) -> str:
-    MAX_CHARS = 120000
+    MAX_CHARS = 1000000  # Qwen 3.5/3.6 支持最高 1M tokens 的超长上下文
     tools = _normalize_tools(tools)
     
     system_text = ""
@@ -158,8 +158,8 @@ def build_prompt_with_tools(messages: list, tools: list) -> str:
                 )
             elif not isinstance(tool_content, str):
                 tool_content = str(tool_content)
-            if len(tool_content) > 1500:
-                tool_content = tool_content[:1500] + "...[truncated]"
+            if len(tool_content) > 100000:
+                tool_content = tool_content[:100000] + "...[truncated]"
             line = f"[Tool Result]{(' id=' + tool_call_id) if tool_call_id else ''}\n{tool_content}\n[/Tool Result]"
             if used + len(line) + 2 > budget and history_parts:
                 break
@@ -194,7 +194,7 @@ def build_prompt_with_tools(messages: list, tools: list) -> str:
             
         is_tool_result = role == "user" and ("[Tool Result]" in text or "[tool result]" in text.lower()
                                               or text.startswith("{") or "\"results\"" in text[:100])
-        max_len = 1500 if is_tool_result else 8000
+        max_len = 100000 if is_tool_result else 200000
         if len(text) > max_len:
             text = text[:max_len] + "...[truncated]"
         prefix = {"user": "Human: ", "assistant": "Assistant: ", "system": "System: "}.get(role, "")
