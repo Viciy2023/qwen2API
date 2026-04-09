@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 import os
 from contextlib import asynccontextmanager
@@ -32,7 +33,7 @@ async (args) => {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + args.token
             },
-            body: JSON.stringify(args.payload),
+            body: args.payload_json,
             signal: controller.signal
         });
         if (!res.ok) {
@@ -291,19 +292,19 @@ class BrowserEngine:
         try:
             js_task = asyncio.create_task(
                 page.evaluate(JS_STREAM_CHUNKED, {
-                    "url": url, "token": token, "payload": payload, "chat_id": chat_id
+                    "url": url, "token": token, "chat_id": chat_id,
+                    "payload_json": json.dumps(payload, ensure_ascii=True),  # 预序列化避免换行符破坏 JS
                 })
             )
             while True:
+                # 快速轮询：每 0.5 秒检查 js_task 是否已失败，避免等满 120 秒
                 try:
-                    chunk = await asyncio.wait_for(queue.get(), timeout=120)
+                    chunk = await asyncio.wait_for(queue.get(), timeout=0.5)
                     yield {"status": "streamed", "chunk": chunk}
                 except asyncio.TimeoutError:
                     if js_task.done():
-                        break
-                    log.warning(f"[Browser] 流式超时等待 chunk (chat_id={chat_id})")
-                    needs_refresh = True
-                    break
+                        break  # 任务已结束（成功或失败），退出循环
+                    continue  # 继续等待
                 if js_task.done() and queue.empty():
                     break
 
