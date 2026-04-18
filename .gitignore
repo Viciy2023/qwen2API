@@ -4,8 +4,6 @@ dist/
 dist-ssr/
 *.local
 
-
-
 # Python
 __pycache__/
 *.py[cod]
@@ -34,6 +32,7 @@ fix_*.py
 .vscode/
 .idea/
 .claude/
+.worktrees/
 .gitignore
 *.suo
 *.ntvs
@@ -41,3 +40,7 @@ fix_*.py
 *.sln
 *.sw?
 huggingface/.env.space.example
+
+# local cleanup
+tests/
+docs/superpowers/
