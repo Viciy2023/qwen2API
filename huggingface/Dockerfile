@@ -12,7 +12,8 @@ ENV PORT=7860 \
     ACCOUNTS_FILE=/data/accounts.json \
     USERS_FILE=/data/users.json \
     CAPTURES_FILE=/data/captures.json \
-    CONFIG_FILE=/data/config.json
+    CONFIG_FILE=/data/config.json \
+    API_KEYS_FILE=/data/api_keys.json
 
 COPY entrypoint.sh /entrypoint.sh
 

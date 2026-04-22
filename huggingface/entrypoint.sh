@@ -16,5 +16,6 @@ init_json_file "${ACCOUNTS_FILE:-/data/accounts.json}" '[]'
 init_json_file "${USERS_FILE:-/data/users.json}" '[]'
 init_json_file "${CAPTURES_FILE:-/data/captures.json}" '[]'
 init_json_file "${CONFIG_FILE:-/data/config.json}" '{}'
+init_json_file "${API_KEYS_FILE:-/data/api_keys.json}" '{"keys":[]}'
 
 exec "$@"

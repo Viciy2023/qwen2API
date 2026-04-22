@@ -44,3 +44,5 @@ huggingface/.env.space.example
 # local cleanup
 tests/
 docs/superpowers/
+huggingface/运行日志.MD
+qwen-auto-register
