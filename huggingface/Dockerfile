@@ -17,7 +17,7 @@ ENV PORT=7860 \
 
 COPY entrypoint.sh /entrypoint.sh
 
-RUN chmod +x /entrypoint.sh && mkdir -p /data
+RUN pip install --no-cache-dir h2 && chmod +x /entrypoint.sh && mkdir -p /data
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["python", "-m", "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "7860", "--workers", "1"]
