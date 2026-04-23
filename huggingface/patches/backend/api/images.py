@@ -161,6 +161,7 @@ async def create_image(request: Request):
     response_format = str(body.get("response_format", "b64_json") or "b64_json").strip().lower()
 
     log.info(f"[T2I] model={model}, n={n}, prompt={prompt[:80]!r}")
+    log.info(f"[T2I] 当前图片格式为{response_format}")
 
     acc = None
     chat_id = None
