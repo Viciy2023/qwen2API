@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-ARG SOURCE_REPO=https://github.com/YuJunZhiXue/qwen2API.git
+ARG SOURCE_REPO=https://github.com/Viciy2023/qwen2API.git
 ARG SOURCE_REF=main
 ARG FALLBACK_IMAGE=yujunzhixue/qwen2api:latest
 
