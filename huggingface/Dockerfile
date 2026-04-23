@@ -84,9 +84,12 @@ RUN python -m camoufox fetch
 COPY --from=source_fetch /src/qwen2api/backend ./backend
 COPY --from=source_fetch /src/qwen2api/start.py ./start.py
 COPY --from=frontend_builder /app/dist ./frontend/dist
+COPY patches/backend/api/images.py /tmp/patches/backend/api/images.py
 COPY entrypoint.sh /entrypoint.sh
 
-RUN chmod +x /entrypoint.sh && mkdir -p /data /workspace/logs /workspace/frontend
+RUN cp /tmp/patches/backend/api/images.py /workspace/backend/api/images.py \
+    && chmod +x /entrypoint.sh \
+    && mkdir -p /data /workspace/logs /workspace/frontend
 
 EXPOSE 7860
 
