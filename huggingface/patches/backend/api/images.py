@@ -157,7 +157,8 @@ async def create_image(request: Request):
 
     n: int = min(max(int(body.get("n", 1)), 1), 4)
     model = _resolve_image_model(body.get("model"))
-    response_format = str(body.get("response_format", "url") or "url").strip().lower()
+    # 为适配 OpenClaw 默认消费链路，未显式指定时默认返回 b64_json。
+    response_format = str(body.get("response_format", "b64_json") or "b64_json").strip().lower()
 
     log.info(f"[T2I] model={model}, n={n}, prompt={prompt[:80]!r}")
 
